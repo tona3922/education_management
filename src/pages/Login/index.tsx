@@ -12,7 +12,7 @@ const Login = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         console.log(userCredential);
-        navigate("/");
+        navigate("/home");
       })
       .catch((error) => {
         console.log(error);
