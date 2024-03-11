@@ -1,12 +1,10 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { auth } from "../../firebase";
-import { ThemeContext } from "../../App";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setAccess } = useContext(ThemeContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const signIn = (e: React.SyntheticEvent) => {
@@ -14,7 +12,6 @@ const Login = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         console.log(userCredential);
-        setAccess(true);
         navigate("/");
       })
       .catch((error) => {
