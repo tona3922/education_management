@@ -15,7 +15,7 @@ const Login = () => {
       .then((userCredential) => {
         console.log(userCredential);
         setAccess(true);
-        navigate("/home");
+        navigate("/");
       })
       .catch((error) => {
         console.log(error);

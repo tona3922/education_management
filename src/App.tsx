@@ -11,12 +11,10 @@ import {
 // protect route from access without login successfully
 const ProtectedRoute: React.FC<{
   access: boolean;
-  redirectPath?: string;
   children: ReactNode;
-}> = ({ access, redirectPath, children }) => {
+}> = ({ access, children }) => {
   if (!access) {
-    redirectPath = "/";
-    return <Navigate to={redirectPath} replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return children;
@@ -35,15 +33,17 @@ function App() {
     <ThemeContext.Provider value={{ access, setAccess }}>
       <Router>
         <Routes>
-          <Route path="/" Component={Login} />
-          <Route
-            path="/home"
-            element={
-              <ProtectedRoute access={access} redirectPath="/home">
-                <Home />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/">
+            <Route
+              index
+              element={
+                <ProtectedRoute access={access}>
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="login" Component={Login} />
+          </Route>
         </Routes>
       </Router>
     </ThemeContext.Provider>
