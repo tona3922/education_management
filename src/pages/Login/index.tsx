@@ -11,8 +11,8 @@ const Login = () => {
     e.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        console.log(userCredential);
-        navigate("/home");
+        console.log("user data: ", userCredential);
+        navigate("/");
       })
       .catch((error) => {
         console.log(error);

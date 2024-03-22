@@ -23,12 +23,11 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   // take uid then create user data with uid then save in user table
   const currentUser = useContext(AuthContext);
-  console.log(currentUser?.uid);
   const loadData = async (currentUser: User, setState: Dispatch<TPerson>) => {
     const docRef = doc(db, "users", currentUser.uid);
     const docSnap = await getDoc(docRef);
     console.log("Data: ", docSnap.data());
-    console.log("Data: ", docSnap.data()?.uid);
+    console.log("Id: ", docSnap.data()?.uid);
     setState({
       name: docSnap.data()?.name,
       image: docSnap.data()?.image,
@@ -122,7 +121,7 @@ const Profile = () => {
         <label htmlFor="file">
           <span>Add an avatar</span>
         </label>
-        <button disabled={loading}>Sign up</button>
+        <button disabled={loading}>Update</button>
         {loading && "Uploading and compressing the image please wait..."}
         {err && <span>Something went wrong</span>}
       </form>
