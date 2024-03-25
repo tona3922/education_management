@@ -1,32 +1,29 @@
-import { signOut } from "firebase/auth";
-import { auth } from "../../firebase";
-import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 
 const Home = () => {
-  const navigate = useNavigate();
-  const logOut = () => {
-    signOut(auth)
-      .then(() => {
-        navigate("/login");
-        localStorage.setItem("token", "");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
   const currentUser = useContext(AuthContext);
-  if (currentUser) {
-    console.log("user: ", currentUser);
-  }
+  const role = currentUser?.displayName;
   return (
     <>
       <Navbar />
       <div>Home</div>
-      <button onClick={() => logOut()}>Log out</button>
-      <button onClick={() => navigate("/profile")}>Profile</button>
+      {role === "teacher" ? (
+        <>
+          <div>Hello mr/ms {role}</div>
+          <div>Lich giang day</div>
+          <div>Danh sach lop giang day</div>
+          <div>Quan ly sinh vien</div>
+        </>
+      ) : (
+        <>
+          <div>Hello {role}</div>
+          <div>Thoi khoa bieu</div>
+          <div>Danh sach mon hoc</div>
+          <div>Tong quat ket qua</div>
+        </>
+      )}
       <div></div>
     </>
   );
