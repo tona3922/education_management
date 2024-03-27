@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import { loadData } from "../../utils/loadData";
 // import { submitProfile } from "./useSubmit";
-import { submitProfile } from "./useSubmit";
+import { submitImage, submitProfile } from "./useSubmit";
 export type TPerson = {
   email: string;
   image: string;
@@ -40,11 +40,37 @@ const Profile = () => {
       }
     }
   };
+  const handleImage = async (e: FormEvent) => {
+    setLoading(true);
+    e.preventDefault();
+    if (currentUser) {
+      const result = await submitImage(e, currentUser);
+      if (typeof result === "string") {
+        setLoading(false);
+        navigate(result);
+      } else {
+        setErr(true);
+      }
+    }
+  };
 
   return (
     <>
       <Navbar />
       {prevData ? <img style={{ width: 200 }} src={prevData.image} /> : <></>}
+      <form onSubmit={handleImage}>
+        <input
+          required
+          style={{ display: "none" }}
+          name="file"
+          type="file"
+          id="file"
+        />
+        <label htmlFor="file">
+          <span>Add an avatar</span>
+        </label>
+        <button>Update avatar</button>
+      </form>
       <form
         onSubmit={handleSubmit}
         style={{
@@ -86,18 +112,6 @@ const Profile = () => {
         <>
           <div>Reconfirm password</div>
           <input required type="text" placeholder="reconfirm password" />
-        </>
-        <>
-          <input
-            required
-            style={{ display: "none" }}
-            name="file"
-            type="file"
-            id="file"
-          />
-          <label htmlFor="file">
-            <span>Add an avatar</span>
-          </label>
         </>
         <button disabled={loading}>Update</button>
         {loading && "Uploading and compressing the image please wait..."}

@@ -21,7 +21,7 @@ const Login = () => {
   return (
     <div>
       <form onSubmit={signIn}>
-        <h1>Welcome to Bk Education</h1>
+        <h1>Welcome to BK Education</h1>
         <input
           type="email"
           placeholder="Enter your email"
