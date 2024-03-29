@@ -35,12 +35,11 @@ const Home = () => {
       {role === "admin" ? <MemberManagement /> : <></>}
       {role === "teacher" ? (
         <>
-          <StudentManagement />
           <div>Hello mr/ms {role}</div>
           <div>Lich giang day</div>
           <div>Danh sach lop giang day</div>
           <div>Quan ly sinh vien</div>
-          {/* <button onClick={setData}>Insert new city</button> */}
+          <StudentManagement />
         </>
       ) : (
         <>

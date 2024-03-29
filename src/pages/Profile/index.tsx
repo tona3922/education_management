@@ -1,22 +1,22 @@
 import { FormEvent, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import { loadData } from "../../utils/loadData";
 // import { submitProfile } from "./useSubmit";
 import { submitImage, submitProfile } from "./useSubmit";
 export type TPerson = {
   email: string;
+  password: string;
   image: string;
   name: string;
   role: string;
 };
 const Profile = () => {
-  const navigate = useNavigate();
   const [prevData, setPrevData] = useState<TPerson>({
     name: "",
     image: "",
     email: "",
+    password: "",
     role: "",
   });
   const [err, setErr] = useState(false);
@@ -34,7 +34,6 @@ const Profile = () => {
       const result = await submitProfile(e, currentUser);
       if (typeof result === "string") {
         setLoading(false);
-        navigate(result);
       } else {
         setErr(true);
       }
@@ -47,7 +46,7 @@ const Profile = () => {
       const result = await submitImage(e, currentUser);
       if (typeof result === "string") {
         setLoading(false);
-        navigate(result);
+        window.location.reload();
       } else {
         setErr(true);
       }
@@ -59,13 +58,7 @@ const Profile = () => {
       <Navbar />
       {prevData ? <img style={{ width: 200 }} src={prevData.image} /> : <></>}
       <form onSubmit={handleImage}>
-        <input
-          required
-          style={{ display: "none" }}
-          name="file"
-          type="file"
-          id="file"
-        />
+        <input style={{ display: "none" }} name="file" type="file" id="file" />
         <label htmlFor="file">
           <span>Add an avatar</span>
         </label>
@@ -83,7 +76,6 @@ const Profile = () => {
         <>
           <div>Name</div>
           <input
-            required
             type="text"
             placeholder="name"
             name="name"
@@ -93,7 +85,6 @@ const Profile = () => {
         <>
           <div>Email</div>
           <input
-            required
             type="email"
             placeholder="email"
             name="email"
@@ -103,15 +94,19 @@ const Profile = () => {
         <>
           <div>Password</div>
           <input
-            required
             type="password"
             placeholder="password"
             name="password"
+            defaultValue={prevData.password}
           />
         </>
         <>
           <div>Reconfirm password</div>
-          <input required type="text" placeholder="reconfirm password" />
+          <input
+            type="text"
+            placeholder="reconfirm password"
+            defaultValue={prevData.password}
+          />
         </>
         <button disabled={loading}>Update</button>
         {loading && "Uploading and compressing the image please wait..."}

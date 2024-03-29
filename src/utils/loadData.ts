@@ -16,6 +16,7 @@ export const loadData = async (
     name: docSnap.data()?.name,
     image: docSnap.data()?.image,
     email: docSnap.data()?.email,
+    password: docSnap.data()?.password,
     role: docSnap.data()?.role,
   });
   return docSnap.data();
