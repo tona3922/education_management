@@ -1,16 +1,3 @@
-export class City {
-  private name: string;
-  private state: string;
-  private country: string;
-  constructor(name: string, state: string, country: string) {
-    this.name = name;
-    this.state = state;
-    this.country = country;
-  }
-  toString() {
-    return this.name + ", " + this.state + ", " + this.country;
-  }
-}
 export class Person {
   name: string;
   email: string;
