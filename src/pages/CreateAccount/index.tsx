@@ -48,7 +48,7 @@ const CreateAccount = () => {
   return (
     <div className="sign-in-container">
       <form onSubmit={CreateAccount}>
-        <h1>Create new account</h1>
+        <h3>Create new account</h3>
         <input
           type="email"
           placeholder="Enter your email"

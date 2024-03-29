@@ -5,6 +5,8 @@ import { AuthContext } from "../../context/AuthContext";
 import { User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
+import MemberManagement from "../Management";
+import StudentManagement from "../Management/Student";
 const loadRole = async (currentUser: User) => {
   const docRef = doc(db, "users", currentUser.uid);
   const docSnap = await getDoc(docRef);
@@ -19,19 +21,21 @@ const Home = () => {
         const roleData = await loadRole(currentUser);
         if (roleData) {
           setRole(roleData);
+          localStorage.setItem("role", roleData);
         }
       }
     };
-
     fetchRole();
   }, [currentUser]);
   return (
     <>
       <Navbar />
       <div>Home</div>
-      <CreateAccount />
+      {role === "admin" ? <CreateAccount /> : <></>}
+      {role === "admin" ? <MemberManagement /> : <></>}
       {role === "teacher" ? (
         <>
+          <StudentManagement />
           <div>Hello mr/ms {role}</div>
           <div>Lich giang day</div>
           <div>Danh sach lop giang day</div>

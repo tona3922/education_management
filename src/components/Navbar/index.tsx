@@ -8,6 +8,7 @@ const Navbar = () => {
       .then(() => {
         navigate("/login");
         localStorage.setItem("token", "");
+        localStorage.setItem("role", "");
       })
       .catch((error) => {
         console.log(error);
