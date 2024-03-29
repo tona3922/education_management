@@ -1,4 +1,3 @@
-import React from "react";
 import StudentManagement from "./Student";
 import TeacherManagement from "./Teacher";
 
