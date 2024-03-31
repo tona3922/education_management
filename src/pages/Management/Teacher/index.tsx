@@ -4,9 +4,9 @@ import { useState } from "react";
 const TeacherManagement = () => {
   const [data, setData] = useState<DocumentData[]>([]);
   const handleClick = async () => {
-    const studentList = await loadUser("teacher");
-    if (studentList) {
-      setData(studentList);
+    const teacherList = await loadUser("teacher");
+    if (teacherList) {
+      setData(teacherList);
     }
   };
   return (
