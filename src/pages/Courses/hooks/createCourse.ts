@@ -1,9 +1,8 @@
 import { setDoc, doc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db } from "../../../firebase";
 
 export const createCourse = async (e: React.SyntheticEvent) => {
   e.preventDefault();
-  console.log("Nice vloz");
   console.log(e);
   const target = e.target as typeof e.target & {
     courseName: { value: string };
