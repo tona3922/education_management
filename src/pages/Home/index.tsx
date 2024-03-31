@@ -7,7 +7,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import MemberManagement from "../Management";
 import StudentManagement from "../Management/Student";
-import CreateCourse from "../Courses";
+import { CreateCourse, LoadCourse } from "../Courses";
 const loadRole = async (currentUser: User) => {
   const docRef = doc(db, "users", currentUser.uid);
   const docSnap = await getDoc(docRef);
@@ -32,9 +32,16 @@ const Home = () => {
     <>
       <Navbar />
       <div>Home</div>
-      {role === "admin" ? <CreateAccount /> : <></>}
-      {role === "admin" ? <MemberManagement /> : <></>}
-      {role === "admin" ? <CreateCourse /> : <></>}
+      {role === "admin" ? (
+        <>
+          <CreateAccount />
+          <MemberManagement />
+          <CreateCourse />
+          <LoadCourse />
+        </>
+      ) : (
+        <></>
+      )}
       <div>Hello {role}</div>
       {role === "teacher" ? (
         <>

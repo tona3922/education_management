@@ -1,5 +1,5 @@
 import { collection, getDocs, DocumentData } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "../../../firebase";
 export const loadCourse = async () => {
   const store: DocumentData[] = [];
   const querySnapshot = await getDocs(collection(db, "courses"));
