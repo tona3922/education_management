@@ -10,6 +10,7 @@ const LoadCourse = () => {
       setCourses(AllCourse);
     }
   };
+  const role = localStorage.getItem("role");
   return (
     <>
       <button onClick={handleLoadCourse}>Load all course</button>
@@ -26,6 +27,7 @@ const LoadCourse = () => {
                 <span>
                   <b>Lecturer:</b> {course.teacher}
                 </span>
+                {role === "student" ? <button>Register</button> : <></>}
               </div>
             );
           })}
