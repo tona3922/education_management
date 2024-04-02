@@ -26,6 +26,7 @@ export const createCourse = async (e: React.SyntheticEvent) => {
     schedule: schedule,
     credit: credit,
     teacher: teacher,
+    studentReigister: [],
   });
   console.log("Create course successfully");
 };

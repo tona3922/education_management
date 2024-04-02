@@ -32,6 +32,7 @@ const Home = () => {
     <>
       <Navbar />
       <div>Home</div>
+      <div>Hello {role}</div>
       {role === "admin" ? (
         <>
           <CreateAccount />
@@ -42,7 +43,6 @@ const Home = () => {
       ) : (
         <></>
       )}
-      <div>Hello {role}</div>
       {role === "teacher" ? (
         <>
           <div>Lich giang day</div>
@@ -51,12 +51,20 @@ const Home = () => {
           <StudentManagement />
         </>
       ) : (
+        <></>
+      )}
+      {role === "student" ? (
         <>
           <div>Thoi khoa bieu</div>
           <div>Danh sach mon hoc</div>
           <div>Tong quat ket qua</div>
+          <div>Dang ky mon hoc</div>
+          <LoadCourse />
         </>
+      ) : (
+        <></>
       )}
+
       <div></div>
     </>
   );
