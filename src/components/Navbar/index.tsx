@@ -7,7 +7,7 @@ const Navbar = () => {
     signOut(auth)
       .then(() => {
         navigate("/login");
-        localStorage.setItem("token", "");
+        localStorage.setItem("userId", "");
         localStorage.setItem("role", "");
       })
       .catch((error) => {

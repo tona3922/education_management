@@ -10,7 +10,7 @@ import {
 import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
 const ProtectedRoute: React.FC = () => {
-  const auth = localStorage.getItem("token");
+  const auth = localStorage.getItem("userId");
   if (!auth) {
     return <Navigate to="/login" replace />;
   }

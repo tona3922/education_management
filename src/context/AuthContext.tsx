@@ -12,7 +12,7 @@ export const AuthContextProvider: React.FC<{
     const unsub = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       if (user) {
-        localStorage.setItem("token", user.uid);
+        localStorage.setItem("userId", user.uid);
       }
     });
 
