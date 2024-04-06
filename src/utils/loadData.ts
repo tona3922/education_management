@@ -8,7 +8,8 @@ export const loadData = async (
   currentUser: User,
   setState: Dispatch<TPerson>
 ) => {
-  const docRef = doc(db, "users", currentUser.uid);
+  const docRef = doc
+  (db, "users", currentUser.uid);
   const docSnap = await getDoc(docRef);
   console.log("Data: ", docSnap.data());
   console.log("Id: ", docSnap.data()?.uid);

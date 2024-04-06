@@ -11,6 +11,8 @@ export type TPerson = {
   name: string;
   role: string;
 };
+
+
 const Profile = () => {
   const [prevData, setPrevData] = useState<TPerson>({
     name: "",

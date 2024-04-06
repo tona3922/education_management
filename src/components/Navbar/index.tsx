@@ -21,7 +21,7 @@ const Navbar = () => {
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        gap: 40,
+        gap: 40
       }}
     >
       <div style={{ fontSize: 20 }}>Education Management</div>
