@@ -5,7 +5,46 @@ import { registerCourse } from "../hooks/registerCourse";
 import { AuthContext } from "../../../context/AuthContext";
 import { loadUser } from "../../../utils/loadUser";
 
+const LoadCourseButton: React.FC<{
+  courseCode: string;
+  userId: string;
+  studentId: string;
+  role: string;
+}> = ({ courseCode, userId, studentId, role }) => {
+  // const isStudentRegistered = checkStudentList(courseCode, userId);
+  return (
+    <>
+      {(() => {
+        switch (role) {
+          case "student":
+            return (
+              <>
+                {role ? (
+                  <button
+                    onClick={() =>
+                      registerCourse(courseCode, userId, studentId)
+                    }
+                  >
+                    Register
+                  </button>
+                ) : (
+                  <button>Already Learnt</button>
+                )}
+              </>
+            );
 
+          case "teacher":
+            return <p className="success">Connected Successfully!</p>;
+          case "admin":
+            return <p className="success">Connected Successfully!</p>;
+
+          default:
+            return null;
+        }
+      })()}
+    </>
+  );
+};
 const LoadCourse = () => {
   const currentUser = useContext(AuthContext);
   const [courses, setCourses] = useState<DocumentData[]>([]);
@@ -21,23 +60,24 @@ const LoadCourse = () => {
     }
   };
   const handleRegister = (course: DocumentData) => {
-    let teacherId = ""
+    let teacherId = "";
     teachers.map((teacher) => {
-      if(course.teacher === teacher.name) {
-        teacherId = teacher.uid
+      if (course.teacher === teacher.name) {
+        teacherId = teacher.uid;
       }
-    })
-    registerCourse(course.courseCode, teacherId, currentUser.uid)
-
-  }
+    });
+    if (currentUser) {
+      registerCourse(course.courseCode, teacherId, currentUser?.uid);
+    }
+  };
   const role = localStorage.getItem("role");
+  const userId = localStorage.getItem("userId");
   return (
     <>
       <button onClick={handleLoadCourse}>Load all course</button>
       {courses && (
         <>
           {courses.map((course) => {
-            
             return (
               <div key={course.courseCode}>
                 <span>
@@ -48,13 +88,28 @@ const LoadCourse = () => {
                 <span>
                   <b>Lecturer:</b> {course.teacher}
                 </span>
-                {role === "student" ? <button onClick={() => handleRegister(course)}>Register</button> : <></>}
-                <div>--------------------------------------------------------</div>
+                {role === "student" ? (
+                  <button onClick={() => handleRegister(course)}>
+                    Register
+                  </button>
+                ) : (
+                  <></>
+                )}
+                <div>
+                  --------------------------------------------------------
+                </div>
+                {role && userId && (
+                  <LoadCourseButton
+                    courseCode={course.courseCode}
+                    role={role}
+                    userId={userId}
+                    studentId=""
+                  />
+                )}
               </div>
             );
           })}
         </>
-
       )}
     </>
   );
