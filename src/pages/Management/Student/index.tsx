@@ -19,9 +19,9 @@ const StudentManagement = () => {
     }
   };
   const getListStudents = () => {
-    let listStudents;
+    let listStudents: string[] = [];
     teachers.map((teacher) => {
-      if (teacher.uid === currentUser.uid && teacher.listStudents) {
+      if (teacher.uid === currentUser?.uid && teacher.listStudents) {
         listStudents = teacher.listStudents;
       }
     });
