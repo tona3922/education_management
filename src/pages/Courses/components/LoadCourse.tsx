@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { loadCourse } from "../hooks/loadCourse";
 import { DocumentData } from "firebase/firestore";
 import { registerCourse } from "../hooks/registerCourse";
+import { AuthContext } from "../../../context/AuthContext";
+import { loadUser } from "../../../utils/loadUser";
+
 const LoadCourseButton: React.FC<{
   courseCode: string;
   userId: string;
+  studentId: string;
   role: string;
-}> = ({ courseCode, userId, role }) => {
+}> = ({ courseCode, userId, studentId, role }) => {
   // const isStudentRegistered = checkStudentList(courseCode, userId);
   return (
     <>
@@ -16,7 +20,11 @@ const LoadCourseButton: React.FC<{
             return (
               <>
                 {role ? (
-                  <button onClick={() => registerCourse(courseCode, userId)}>
+                  <button
+                    onClick={() =>
+                      registerCourse(courseCode, userId, studentId)
+                    }
+                  >
                     Register
                   </button>
                 ) : (
@@ -38,11 +46,28 @@ const LoadCourseButton: React.FC<{
   );
 };
 const LoadCourse = () => {
+  const currentUser = useContext(AuthContext);
   const [courses, setCourses] = useState<DocumentData[]>([]);
+  const [teachers, setTeacher] = useState<DocumentData[]>([]);
   const handleLoadCourse = async () => {
     const AllCourse = await loadCourse();
     if (AllCourse) {
       setCourses(AllCourse);
+    }
+    const teacherList = await loadUser("teacher");
+    if (teacherList) {
+      setTeacher(teacherList);
+    }
+  };
+  const handleRegister = (course: DocumentData) => {
+    let teacherId = "";
+    teachers.map((teacher) => {
+      if (course.teacher === teacher.name) {
+        teacherId = teacher.uid;
+      }
+    });
+    if (currentUser) {
+      registerCourse(course.courseCode, teacherId, currentUser?.uid);
     }
   };
   const role = localStorage.getItem("role");
@@ -63,11 +88,22 @@ const LoadCourse = () => {
                 <span>
                   <b>Lecturer:</b> {course.teacher}
                 </span>
+                {role === "student" ? (
+                  <button onClick={() => handleRegister(course)}>
+                    Register
+                  </button>
+                ) : (
+                  <></>
+                )}
+                <div>
+                  --------------------------------------------------------
+                </div>
                 {role && userId && (
                   <LoadCourseButton
                     courseCode={course.courseCode}
                     role={role}
                     userId={userId}
+                    studentId=""
                   />
                 )}
               </div>

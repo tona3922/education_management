@@ -4,6 +4,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { User } from "firebase/auth";
 
+
 export const submitProfile = async (e: FormEvent, currentUser: User) => {
   const target = e.target as typeof e.target & {
     name: { value: string };
