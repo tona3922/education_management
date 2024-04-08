@@ -3,27 +3,33 @@ import { loadCourse } from "../hooks/loadCourse";
 import { DocumentData } from "firebase/firestore";
 import { registerCourse } from "../hooks/registerCourse";
 import { AuthContext } from "../../../context/AuthContext";
-
+import { loadUser } from "../../../utils/loadUser";
 
 
 const LoadCourse = () => {
+  const currentUser = useContext(AuthContext);
   const [courses, setCourses] = useState<DocumentData[]>([]);
+  const [teachers, setTeacher] = useState<DocumentData[]>([]);
   const handleLoadCourse = async () => {
     const AllCourse = await loadCourse();
     if (AllCourse) {
       setCourses(AllCourse);
     }
+    const teacherList = await loadUser("teacher");
+    if (teacherList) {
+      setTeacher(teacherList);
+    }
   };
+  const handleRegister = (course: DocumentData) => {
+    let teacherId = ""
+    teachers.map((teacher) => {
+      if(course.teacher === teacher.name) {
+        teacherId = teacher.uid
+      }
+    })
+    registerCourse(course.courseCode, teacherId, currentUser.uid)
 
-
-  const currentUser = useContext(AuthContext);
-  //console.log(">>>check current id:", typeof currentUser.uid)
-  const handleRegister = (course) => {
-    registerCourse(course.courseCode, currentUser.uid)
   }
-
-
-
   const role = localStorage.getItem("role");
   return (
     <>
@@ -31,6 +37,7 @@ const LoadCourse = () => {
       {courses && (
         <>
           {courses.map((course) => {
+            
             return (
               <div key={course.courseCode}>
                 <span>
