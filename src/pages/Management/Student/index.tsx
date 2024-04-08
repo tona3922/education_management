@@ -25,7 +25,7 @@ const StudentManagement = () => {
         listStudents = teacher.listStudents;
       }
     });
-    let students = [];
+    const students = [];
     for (let i = 0; i < data.length; i++) {
       for (let j = 0; j < listStudents.length; j++) {
         if (listStudents[j] === data[i].uid) {
