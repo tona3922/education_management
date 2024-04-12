@@ -1,65 +1,144 @@
-import { DocumentData } from "firebase/firestore";
+/* eslint-disable react-hooks/rules-of-hooks */
+import { DocumentData, doc, getDoc } from "firebase/firestore";
 import { loadUser } from "../../../utils/loadUser";
-import { useState, useContext } from "react";
-import { AuthContext } from "../../../context/AuthContext";
+import { useState, useEffect } from "react";
 import { setGrade } from "./setGrade";
+import { db } from "../../../firebase";
+// import SetGrade from "./components/SetGrade";
 
 const StudentManagement = () => {
-  const [data, setData] = useState<DocumentData[]>([]);
-  const [teachers, setTeacher] = useState<DocumentData[]>([]);
-  const currentUser = useContext(AuthContext);
-  const handleClick = async () => {
-    const studentList = await loadUser("student");
-    if (studentList) {
-      setData(studentList);
-    }
-    const teacherList = await loadUser("teacher");
-    if (teacherList) {
-      setTeacher(teacherList);
-    }
-  };
-  const getListStudents = () => {
-    let listStudents: string[] = [];
-    teachers.map((teacher) => {
-      if (teacher.uid === currentUser?.uid && teacher.listStudents) {
-        listStudents = teacher.listStudents;
+  const [students, setData] = useState<DocumentData[]>([]);
+  const [listStudents, setListStudents] = useState<any>(null);
+  const scoreCount = 10;
+  const midtermScoreStates = Array.from({ length: scoreCount }, () =>
+    useState<number>(0)
+  );
+  const finalScoreStates = Array.from({ length: scoreCount }, () =>
+    useState<number>(0)
+  );
+
+  let count = 0;
+  useEffect(() => {
+    const fetchData = async () => {
+      const studentList = await loadUser("student");
+      if (studentList) {
+        setData(studentList);
       }
-    });
-    const students = [];
-    for (let i = 0; i < data.length; i++) {
-      for (let j = 0; j < listStudents.length; j++) {
-        if (listStudents[j] === data[i].uid) {
-          students.push(data[i]);
+    };
+    fetchData();
+  }, []);
+
+  const getListStudent = async (currentUserId: string) => {
+    const docRef = doc(db, "users", currentUserId);
+    const docSnap = await getDoc(docRef);
+    const listStudentsData = await docSnap.data()?.listStudents;
+    const resultMap: any = {};
+    Object.keys(listStudentsData).forEach((courseCode) => {
+      const studentIds = listStudentsData[courseCode];
+      studentIds.forEach((studentId: any) => {
+        const foundStudent = students.find(
+          (student) => student.uid === studentId
+        );
+        if (foundStudent) {
+          if (!resultMap[courseCode]) {
+            resultMap[courseCode] = [foundStudent];
+          } else {
+            resultMap[courseCode].push(foundStudent);
+          }
         }
-      }
-    }
-    return students;
-  };
-  const listStudents = getListStudents();
-
-  const handleSetGrade = () => {
-    setGrade();
-    //console.table(listStudents);
+      });
+    });
+    setListStudents(resultMap);
   };
 
+  const handleSetGrade = (
+    midleScore: number,
+    finalScore: number,
+    studentId: string,
+    courseCode: string
+  ) => {
+    setGrade(midleScore, finalScore, studentId, courseCode);
+  };
+  const currentUserId = localStorage.getItem("userId");
   return (
     <>
       <h3>Student Management</h3>
-      <button onClick={() => handleClick()}>Load Student list</button>
-
+      {currentUserId && (
+        <button onClick={() => getListStudent(currentUserId)}>
+          Load Student list
+        </button>
+      )}
       {listStudents && (
         <>
-          {listStudents.map((item) => {
-            return (
-              <div key={item.uid}>
-                <p>{item.name}</p>
-                <p>{item.email}</p>
-                <img style={{ width: 150 }} src={item.image} /> <br />
-                <button onClick={() => handleSetGrade()}>Set Grade</button>
-                <div>-------------------------------------------------</div>
-              </div>
-            );
-          })}
+          {Object.keys(listStudents).map((courseCode) => (
+            <div key={courseCode}>
+              <h4>Course: {courseCode}</h4>
+              {listStudents[courseCode].map((student: any) => {
+                const [midtermScore, setMidtermScore] =
+                  midtermScoreStates[count];
+                const [finalScore, setFinalScore] = finalScoreStates[count];
+                count++;
+                return (
+                  <div key={student.uid}>
+                    <p>{student.name}</p>
+                    <p>{student.email}</p>
+                    <img
+                      style={{ width: 150 }}
+                      src={student.image}
+                      alt="Student"
+                    />{" "}
+                    <br />
+                    <br />
+                    <div>
+                      {" "}
+                      Current midterm score:{" "}
+                      {student.listCourses[courseCode].midterm}
+                    </div>
+                    <input
+                      type="number"
+                      value={midtermScore}
+                      onChange={(event) =>
+                        setMidtermScore(parseFloat(event.target.value))
+                      }
+                      placeholder="Enter new midterm score"
+                    />
+                    <br />
+                    <div>
+                      {" "}
+                      Current final score:{" "}
+                      {student.listCourses[courseCode].final}
+                    </div>
+                    <input
+                      type="number"
+                      value={finalScore}
+                      onChange={(event) =>
+                        setFinalScore(parseFloat(event.target.value))
+                      }
+                      placeholder="Enter new final score"
+                    />
+                    <br />
+                    <div>
+                      {" "}
+                      Average score: {student.listCourses[courseCode].average}
+                    </div>
+                    <button
+                      onClick={() => {
+                        handleSetGrade(
+                          midtermScore,
+                          finalScore,
+                          student.uid,
+                          courseCode
+                        );
+                      }}
+                    >
+                      Set Grade
+                    </button>
+                    <div>-------------------------------------------------</div>
+                  </div>
+                );
+              })}
+            </div>
+          ))}
         </>
       )}
     </>
