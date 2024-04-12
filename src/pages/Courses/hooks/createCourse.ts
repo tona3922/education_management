@@ -16,10 +16,6 @@ export const createCourse = async (e: React.SyntheticEvent) => {
   const schedule = target.schedule.value;
   const credit = target.credit.value;
   const teacher = target.teacher.value;
-  // console.log(courseName);
-  // console.log(courseCode);
-  // console.log(credit);
-  // console.log(teacher);
   await setDoc(doc(db, "courses", courseCode), {
     courseName: courseName,
     courseCode: courseCode,

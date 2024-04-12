@@ -72,7 +72,7 @@ const LoadCourse = () => {
   };
   const role = localStorage.getItem("role");
   const userId = localStorage.getItem("userId");
-  
+
   return (
     <>
       <button onClick={handleLoadCourse}>Load all course</button>
