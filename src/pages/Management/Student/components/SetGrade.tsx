@@ -68,7 +68,6 @@ const SetGrade: React.FC<{
       <div>-------------------------------------------------</div>
     </div>
   );
-  //   })}
 };
 
 export default SetGrade;

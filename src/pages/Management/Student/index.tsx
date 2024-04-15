@@ -4,7 +4,6 @@ import { loadUser } from "../../../utils/loadUser";
 import { useState, useEffect } from "react";
 import { setGrade } from "./setGrade";
 import { db } from "../../../firebase";
-// import SetGrade from "./components/SetGrade";
 import { setGPA } from "./components/setGPA";
 
 const StudentManagement = () => {
