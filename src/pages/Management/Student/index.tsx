@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { setGrade } from "./setGrade";
 import { db } from "../../../firebase";
 // import SetGrade from "./components/SetGrade";
+import { setGPA } from "./components/setGPA";
 
 const StudentManagement = () => {
   const [students, setData] = useState<DocumentData[]>([]);
@@ -58,6 +59,7 @@ const StudentManagement = () => {
     courseCode: string
   ) => {
     setGrade(midleScore, finalScore, studentId, courseCode);
+    setGPA(studentId);
   };
   const currentUserId = localStorage.getItem("userId");
   return (
