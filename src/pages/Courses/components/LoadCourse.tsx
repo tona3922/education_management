@@ -4,6 +4,9 @@ import { DocumentData } from "firebase/firestore";
 import { registerCourse } from "../hooks/registerCourse";
 import { AuthContext } from "../../../context/AuthContext";
 import { loadUser } from "../../../utils/loadUser";
+import { Link } from "react-router-dom";
+
+import styles from "../index.module.css";
 
 const LoadCourseButton: React.FC<{
   courseCode: string;
@@ -49,6 +52,7 @@ const LoadCourse = () => {
   const currentUser = useContext(AuthContext);
   const [courses, setCourses] = useState<DocumentData[]>([]);
   const [teachers, setTeacher] = useState<DocumentData[]>([]);
+
   const handleLoadCourse = async () => {
     const AllCourse = await loadCourse();
     if (AllCourse) {
@@ -70,6 +74,7 @@ const LoadCourse = () => {
       registerCourse(course.courseCode, teacherId, currentUser?.uid);
     }
   };
+
   const role = localStorage.getItem("role");
   const userId = localStorage.getItem("userId");
 
@@ -84,8 +89,11 @@ const LoadCourse = () => {
                 <span>
                   code: {course.courseCode} - credit: {course.credit}
                 </span>
-                <h4>{course.courseName}</h4>
-                <p>{course.schedule}</p>
+                <div>
+                  <Link to={`/course/${course.courseCode}`}>
+                    <h4 className={styles.courseName}>{course.courseName}</h4>
+                  </Link>
+                </div>
                 <span>
                   <b>Lecturer:</b> {course.teacher}
                 </span>

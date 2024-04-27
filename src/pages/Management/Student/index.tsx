@@ -1,14 +1,25 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { DocumentData, doc, getDoc } from "firebase/firestore";
 import { loadUser } from "../../../utils/loadUser";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, ChangeEvent } from "react";
 import { setGrade } from "./setGrade";
 import { db } from "../../../firebase";
 import { setGPA } from "./components/setGPA";
+import { Link } from "react-router-dom";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { uuidv4 } from "../../../utils/common";
+import { ECourseDocumentType, updateCourseDocument } from "./updateCourse";
 
 const StudentManagement = () => {
   const [students, setData] = useState<DocumentData[]>([]);
   const [listStudents, setListStudents] = useState<any>(null);
+  const [courseSelected, setCourseSelected] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  const [documentUploadType, setDocumentUploadType] =
+    useState<ECourseDocumentType>(ECourseDocumentType.FILE);
+
+  const inputFileRef = useRef<HTMLInputElement | null>(null);
+
   const scoreCount = 10;
   const midtermScoreStates = Array.from({ length: scoreCount }, () =>
     useState<number>(0)
@@ -61,6 +72,88 @@ const StudentManagement = () => {
     setGPA(studentId);
   };
   const currentUserId = localStorage.getItem("userId");
+
+  const onUploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
+    // Get the file from the upload event
+    const file = e.target.files?.[0];
+
+    if (!file || !courseSelected) return;
+
+    try {
+      setIsUploading(true);
+      const splitFileName = file.name.split(".");
+
+      const fileName =
+        splitFileName[0] + "_" + uuidv4() + "." + splitFileName[1];
+
+      // Get a reference to Firebase storage
+      const storage = getStorage();
+      const storageRef = ref(storage, fileName);
+      const res = await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(res.ref);
+      
+      // Create new document data
+      const documentData = {
+        id: uuidv4(),
+        name: file.name,
+        content: url,
+        type: documentUploadType,
+      };
+
+      await updateCourseDocument(courseSelected, documentData);
+      alert("Upload document successfully");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsUploading(false);
+      inputFileRef.current && (inputFileRef.current.value = "");
+    }
+  };
+
+  const onClickUploadBtn = async (courseCode: string) => {
+    // Save the selected course code to the state
+    setCourseSelected(courseCode);
+    const type = prompt("Enter you document type (FILE, VIDEO, NOTIFICATION)");
+    const typeFormatted = type?.toUpperCase() as ECourseDocumentType;
+    
+    // Check if the entered document type is valid
+    if (
+      !typeFormatted ||
+      ![
+        ECourseDocumentType.FILE,
+        ECourseDocumentType.NOTIFICATION,
+        ECourseDocumentType.VIDEO,
+      ].includes(typeFormatted)
+    ) {
+      return;
+    }
+
+    setDocumentUploadType(typeFormatted);
+
+    if (typeFormatted === ECourseDocumentType.NOTIFICATION) {
+      const notificationContent = prompt("Enter your notification:");
+      if (!notificationContent) return;
+
+      setIsUploading(true);
+
+      const documentData = {
+        id: uuidv4(),
+        content: notificationContent,
+        type: typeFormatted,
+      };
+
+      await updateCourseDocument(courseCode, documentData);
+
+      setIsUploading(false);
+      alert("Upload document successfully");
+    } else {
+      if (isUploading || !inputFileRef.current) return;
+      inputFileRef.current.accept =
+        typeFormatted === ECourseDocumentType.FILE ? ".pdf" : ".mp4";
+      inputFileRef.current.click();
+    }
+  };
+
   return (
     <>
       <h3>Student Management</h3>
@@ -73,7 +166,14 @@ const StudentManagement = () => {
         <>
           {Object.keys(listStudents).map((courseCode) => (
             <div key={courseCode}>
-              <h4>Course: {courseCode}</h4>
+              <Link to={`/course/${courseCode}`}>
+                <h4>Course: {courseCode}</h4>
+              </Link>
+
+              <button onClick={() => onClickUploadBtn(courseCode)}>
+                {isUploading ? "Uploading..." : "Upload document"}
+              </button>
+
               {listStudents[courseCode].map((student: any) => {
                 const [midtermScore, setMidtermScore] =
                   midtermScoreStates[count];
@@ -142,6 +242,15 @@ const StudentManagement = () => {
           ))}
         </>
       )}
+
+      <input
+        type="file"
+        name=""
+        id=""
+        hidden
+        ref={inputFileRef}
+        onChange={onUploadFile}
+      />
     </>
   );
 };
