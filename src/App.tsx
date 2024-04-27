@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
+import CourseDetail from "./pages/CourseDetail";
 const ProtectedRoute: React.FC = () => {
   const auth = localStorage.getItem("userId");
   if (!auth) {
@@ -23,6 +24,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<Home />} path="/" />
           <Route element={<Profile />} path="/profile" />
+          <Route element={<CourseDetail />} path="/course/:courseCode" />
         </Route>
         <Route path="/login" Component={Login} />
         <Route path="*" Component={NotFound} />
